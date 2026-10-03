@@ -5,6 +5,6 @@ import {SessionProvider} from './session';
 import {Shell} from './shell';
 export function AppFrame({children}:{children:ReactNode}){
  const pathname=usePathname();
- const family=['/ganhos','/tarefas','/configuracoes','/membros'].some(route=>pathname===route||pathname.startsWith(route+'/'));
+ const family=['/ganhos','/analise','/tarefas','/configuracoes','/membros'].some(route=>pathname===route||pathname.startsWith(route+'/'));
  return family?<SessionProvider><Shell>{children}</Shell></SessionProvider>:children;
 }
