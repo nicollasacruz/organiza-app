@@ -45,3 +45,23 @@
 .loading-rows{display:flex;flex-direction:column;gap:22px;padding:32px 24px;min-height:160px}
 .task-loading{flex:1;min-height:0}
 @media(prefers-reduced-motion:no-preference){.loading-pulse{animation:loading-pulse 1.4s ease-in-out infinite}@keyframes loading-pulse{0%,100%{opacity:.4}50%{opacity:1}}}
+
+.custom-select{position:relative;display:inline-flex;width:100%;min-width:0}
+.select-value{position:absolute!important;width:1px!important;height:1px!important;min-height:0!important;padding:0!important;border:0!important;clip-path:inset(50%);overflow:hidden}
+.select-trigger{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%;min-height:42px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--text);text-align:left;font:inherit;font-weight:400}
+.select-trigger>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.select-trigger svg{flex-shrink:0;color:var(--muted)}
+.select-trigger[aria-expanded=true]{border-color:var(--accent)}
+.select-menu{position:fixed;inset:auto;margin:0;padding:6px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--text);box-shadow:var(--shadow);overflow:auto;overscroll-behavior:contain}
+.select-menu button{display:flex;align-items:center;justify-content:space-between;gap:14px;width:100%;min-height:44px;padding:10px 12px;background:transparent;border:0;border-radius:6px;text-align:left;font-size:14px;color:var(--text)}
+.select-menu button:hover:not(:disabled),.select-menu button:focus-visible{background:var(--surface-alt);outline:2px solid var(--accent);outline-offset:-2px}
+.select-menu button[aria-selected=true]{background:var(--soft);font-weight:600}.select-menu button>span:last-child{color:var(--accent)}
+.task-bottom>.custom-select{width:145px;flex-shrink:0}.task-bottom .select-trigger{font-size:12px;min-height:36px;padding:6px 10px}
+.main-wrap:has(.tasks-content){height:100dvh;display:flex;flex-direction:column;min-height:0}
+.main-wrap:has(.tasks-content)>.offline-banner{flex-shrink:0}
+.tasks-content{flex:1;width:100%;min-height:0;padding-bottom:24px}
+.tasks-screen{height:100%;min-height:0;display:flex;flex-direction:column}
+.tasks-screen>.page-header,.tasks-screen>.tasks-toolbar,.tasks-screen>.legend,.tasks-screen>.error{flex-shrink:0}
+.tasks-screen>.kanban{flex:1;min-height:0;overflow:hidden;grid-template-rows:minmax(0,1fr);align-items:stretch}
+.tasks-screen>.kanban>.kanban-column{min-height:0;overflow:auto;overscroll-behavior:contain}
+@media(min-width:721px){.tasks-screen>.calendar-panel{flex:1;min-height:0;overflow:auto}}
+@media(max-width:720px){.main-wrap:has(.tasks-content){height:calc(100dvh - 72px - env(safe-area-inset-bottom))}.tasks-content{height:auto;padding-bottom:14px}.field .select-trigger{font-size:16px}}

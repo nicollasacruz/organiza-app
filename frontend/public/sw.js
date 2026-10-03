@@ -1,5 +1,5 @@
-const CACHE='organiza-static-v1';
-const SHELL=['/','/ganhos/','/tarefas/','/configuracoes/','/membros/','/convite/','/manifest.webmanifest','/icon.svg'];
+const CACHE='organiza-static-v2';
+const SHELL=['/','/ganhos/','/tarefas/','/configuracoes/','/membros/','/convite/','/manifest.webmanifest','/favicon.ico'];
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(SHELL))));
 self.addEventListener('activate',event=>event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)))).then(()=>self.clients.claim())));
 self.addEventListener('fetch',event=>{
