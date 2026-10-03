@@ -76,11 +76,11 @@ A ligação é individual e separada do login. Scopes: calendar.calendarlist.rea
 
 ## Produção em Docker Compose
 
-Destino: root@62.169.28.198, pasta /projects/organiza-app e domínio https://appcasa.run.place. O servidor deve ter a rede Docker externa reverse-proxy e o domínio deve apontar para esse servidor. A app usa VIRTUAL_HOST/VIRTUAL_PORT e LETSENCRYPT_HOST; o reverse proxy existente termina o HTTPS.
+Destino: root@62.169.28.198, pasta /root/projects/organiza-app e domínio https://appcasa.run.place. O servidor deve ter a rede Docker externa reverse-proxy e o domínio deve apontar para esse servidor. As labels do Compose ativam a rota no Traefik, no entrypoint websecure, com o resolvedor ACME le-http (TLS-ALPN-01) já configurado no servidor. O Traefik termina o HTTPS e encaminha para a porta interna 8080 da app. O redirecionamento HTTP para HTTPS já está configurado no entrypoint web do proxy.
 
-O .env privado contém PUBLIC_ORIGIN, PASSKEY_DOMAIN, POSTGRES_PASSWORD e LETSENCRYPT_EMAIL. As palavras-passe de desenvolvimento e produção devem ser diferentes. Google continua opcional até configurar as suas credenciais. Não publique ou coloque o .env no GitHub.
+O .env privado contém PUBLIC_ORIGIN, PASSKEY_DOMAIN, VIRTUAL_HOST e POSTGRES_PASSWORD. O email e o armazenamento dos certificados pertencem à configuração do Traefik; as variáveis antigas LETSENCRYPT_HOST/LETSENCRYPT_EMAIL não são usadas pela app. As palavras-passe de desenvolvimento e produção devem ser diferentes. Google continua opcional até configurar as suas credenciais. Não publique ou coloque o .env no GitHub.
 
-No servidor, dentro de /projects/organiza-app:
+No servidor, dentro de /root/projects/organiza-app:
 
 ```sh
 ./scripts/deploy.sh

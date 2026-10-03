@@ -5,10 +5,6 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Production
       ASPNETCORE_URLS: http://+:8080
-      VIRTUAL_HOST: ${VIRTUAL_HOST:-appcasa.run.place}
-      VIRTUAL_PORT: "8080"
-      LETSENCRYPT_HOST: ${LETSENCRYPT_HOST:-appcasa.run.place}
-      LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL:?Configure LETSENCRYPT_EMAIL}
       ConnectionStrings__Database: Host=db;Database=organiza;Username=organiza;Password=${POSTGRES_PASSWORD:?Configure POSTGRES_PASSWORD}
       App__PublicOrigin: ${PUBLIC_ORIGIN:?Configure PUBLIC_ORIGIN com HTTPS}
       App__PasskeyDomain: ${PASSKEY_DOMAIN:?Configure PASSKEY_DOMAIN sem protocolo}
@@ -17,6 +13,15 @@ services:
       Google__ClientId: ${GOOGLE_CLIENT_ID:-}
       Google__ClientSecret: ${GOOGLE_CLIENT_SECRET:-}
       Google__RedirectUri: ${PUBLIC_ORIGIN}/api/integrations/google/callback
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: reverse-proxy
+      traefik.http.routers.organiza.rule: Host(`${VIRTUAL_HOST:-appcasa.run.place}`)
+      traefik.http.routers.organiza.entrypoints: websecure
+      traefik.http.routers.organiza.tls: "true"
+      traefik.http.routers.organiza.tls.certresolver: le-http
+      traefik.http.routers.organiza.service: organiza
+      traefik.http.services.organiza.loadbalancer.server.port: "8080"
     expose: ["8080"]
     networks:
       - default
