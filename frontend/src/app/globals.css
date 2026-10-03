@@ -69,3 +69,25 @@
 .tasks-screen>.kanban>.kanban-column{min-height:0;overflow:auto;overscroll-behavior:contain}
 @media(min-width:721px){.tasks-screen>.calendar-panel{flex:1;min-height:0;overflow:auto}}
 @media(max-width:720px){.main-wrap:has(.tasks-content){height:calc(100dvh - 72px - env(safe-area-inset-bottom))}.tasks-content{height:auto;padding-bottom:14px}.field .select-trigger{font-size:16px}}
+
+.tasks-header-actions{display:flex;gap:10px;flex-shrink:0}
+.modal:has(.suggestion-dialog){width:min(720px,calc(100% - 32px));height:min(800px,calc(100dvh - 48px));overflow:hidden;display:flex;flex-direction:column}
+.modal:has(.suggestion-dialog):not([open]){display:none}
+.modal:has(.suggestion-dialog)>.modal-head{flex-shrink:0;margin-bottom:12px}
+.suggestion-dialog{display:flex;flex-direction:column;flex:1;min-height:0}
+.suggestion-dialog .suggestion-privacy{font-size:11px;line-height:1.5;color:var(--muted);margin:0 0 12px;flex-shrink:0}
+.suggestion-history{flex:1;min-height:0;overflow:auto;overscroll-behavior:contain;padding:2px 4px 8px;scrollbar-gutter:stable}
+.suggestion-message{padding:12px 14px;border-radius:10px;background:var(--surface-alt);margin-bottom:12px;white-space:pre-wrap;overflow-wrap:anywhere}
+.suggestion-message.user{margin-left:30px;background:var(--soft)}.suggestion-message.assistant{margin-right:30px}
+.suggestion-message>strong{font-size:11px;color:var(--muted)}.suggestion-message>p{font-size:13px;margin:6px 0 0}.suggestion-message .loading-pulse+.loading-pulse{margin-top:12px}
+.suggestion-summary,.suggestion-plan{padding:16px;border:1px solid var(--line);border-radius:10px;margin:14px 0}
+.suggestion-summary h4{margin:20px 0 10px;font-size:13px}.suggestion-summary>.muted{font-size:11px}
+.availability-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.availability-row>label{font-size:11px;color:var(--muted)}.availability-row input{margin-top:4px}
+.estimate-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:12px}
+.estimate-row>span:first-child{flex:1;min-width:0;overflow-wrap:anywhere}.estimate-row small{display:block;color:var(--muted);font-size:10px;margin-top:3px}.estimate-row input{width:72px;flex-shrink:0}
+.suggestion-actions{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.suggestion-actions .button{font-size:11px}
+.suggestion-plan h3{margin:20px 0 10px}.suggested-task{padding:12px;background:var(--surface-alt);border-radius:8px;margin-bottom:8px}.suggested-task strong{font-size:13px}.suggested-task p{font-size:12px;margin:6px 0}.suggested-task small{color:var(--muted)}
+.unplaced-task{display:flex;flex-direction:column;gap:3px;font-size:12px!important}.unplaced-task span{color:var(--muted);font-size:11px}
+.suggestion-compose{display:flex;align-items:flex-end;gap:8px;border-top:1px solid var(--line);padding-top:12px;flex-shrink:0}.suggestion-compose textarea{resize:none;font-size:16px}.suggestion-compose .button{width:44px;min-height:44px;flex-shrink:0;padding:10px}
+@media(max-width:720px){.tasks-header-actions{flex-direction:column;gap:7px}.tasks-header-actions .button{padding:8px 11px;min-height:35px;font-size:11px;gap:5px}.tasks-header-actions svg{width:16px;height:16px}.modal:has(.suggestion-dialog){width:calc(100% - 20px);height:calc(100dvh - 24px);max-height:calc(100dvh - 24px);padding:16px}.suggestion-summary,.suggestion-plan{padding:12px}.suggestion-message.user{margin-left:15px}.suggestion-message.assistant{margin-right:15px}}

@@ -40,4 +40,48 @@ Equal(43000,corrected[1].TargetCents);Equal(0,corrected[1].IncomingCents);Equal(
 Equal(5975,corrected[2].IncomingCents);Equal(37025,corrected[2].ShortfallCents);
 var changedAugust = Earnings.Roll(new[] {(date,90000),(date.AddMonths(1),48975)},october);
 Equal(corrected[1],changedAugust[1]);Equal(corrected[2],changedAugust[2]);
+var now = new DateTimeOffset(2026,10,3,18,30,20,TimeSpan.Zero); // 19:30 in Lisbon.
+var planningDay = Planning.Today(now);
+var family = new HashSet<string> { "a", "b" };
+var late = Guid.NewGuid(); var nextDay = Guid.NewGuid(); var shared = Guid.NewGuid(); var unknownTime = Guid.NewGuid();
+var planningTasks = new[] {
+    new PlanningTask(late,"Atrasada","a",planningDay.AddDays(-2)),
+    new PlanningTask(nextDay,"Amanhã","a",planningDay.AddDays(1)),
+    new PlanningTask(shared,"Partilhada",null,null),
+    new PlanningTask(unknownTime,"Sem estimativa",null,null)
+};
+var windows = new[] { new FreeWindow("a",planningDay,new(19,0),new(20,30)), new FreeWindow("a",planningDay,new(20,0),new(21,0)), new FreeWindow("b",planningDay,new(20,0),new(21,0)) };
+var estimates = new[] { new TaskEstimate(late,30),new TaskEstimate(nextDay,30),new TaskEstimate(shared,45) };
+var proposal = Planning.Schedule(planningTasks,windows,estimates,[],family,now);
+Equal(3,proposal.Items.Length);Equal(late,proposal.Items[0].TaskId);Equal("a",proposal.Items[0].MemberId);
+Equal(new TimeOnly(19,31),TimeOnly.FromDateTime(proposal.Items[0].Start.DateTime));
+Equal("b",proposal.Items.Single(t=>t.TaskId==shared).MemberId);
+Equal("Duração por confirmar",proposal.Unplaced.Single().Reason);
+Equal(true,proposal.Items.All(t=>t.Start>=now));
+foreach(var member in family) { var perMember=proposal.Items.Where(t=>t.MemberId==member).OrderBy(t=>t.Start).ToArray();for(int i=1;i<perMember.Length;i++)Equal(true,perMember[i].Start>=perMember[i-1].End); }
+var tooLong=Planning.Schedule([planningTasks[0]],windows,[new(late,120)],[],family,now);
+Equal(0,tooLong.Items.Length);Equal("Sem tempo disponível",tooLong.Unplaced.Single().Reason);
+var reassigned=Planning.Schedule([planningTasks[0]],windows,[new(late,30)],[new(late,"b",false,"")],family,now);
+Equal("a",reassigned.Items.Single().MemberId);
+reassigned=Planning.Schedule([planningTasks[0]],windows,[new(late,30)],[new(late,"b",true,"Pedido na conversa")],family,now);
+Equal("b",reassigned.Items.Single().MemberId);
+Equal(0,Planning.ValidateWindows([new("a",planningDay.AddDays(-1),new(10,0),new(11,0))],family,now).Length);
+Equal(0,Planning.ValidateWindows([new("a",planningDay,new(10,0),new(11,0))],family,now).Length);
+Equal(0,Planning.ValidateWindows([new("a",planningDay.AddDays(2),new(10,0),new(11,0))],family,now).Length);
+Invalid(()=>Planning.ValidateWindows([new("missing",planningDay,new(20,0),new(21,0))],family,now));
+Invalid(()=>Planning.ValidateWindows([new("a",planningDay,new(21,0),new(20,0))],family,now));
+Invalid(()=>Planning.Schedule(planningTasks,windows,[new(late,0)],[],family,now));
+Invalid(()=>Planning.Schedule(planningTasks,windows,[new(late,721)],[],family,now));
+Invalid(()=>Planning.Schedule(planningTasks,windows,[new(late,30),new(late,45)],[],family,now));
+Equal(false,Planning.Eligible(planningDay.AddDays(8),now));Equal(true,Planning.Eligible(planningDay.AddDays(7),now));
+Equal(true,Planning.Eligible(null,now));Equal(true,Planning.Eligible(planningDay.AddDays(-100),now));
+Equal(0,Planning.Schedule([],windows,[],[],family,now).Items.Length);
+Equal(0,Planning.Schedule(planningTasks,[],estimates,[],family,now).Items.Length);
+var midnight = new DateTimeOffset(2026,10,4,0,10,0,TimeSpan.Zero);
+Equal(0,Planning.ValidateWindows([new("a",planningDay,new(20,0),new(21,0))],family,midnight).Length);
+var spring = new DateTimeOffset(2026,3,28,12,0,0,TimeSpan.Zero);
+Invalid(()=>Planning.ValidateWindows([new("a",new(2026,3,29),new(1,15),new(2,15))],family,spring));
+var autumn = new DateTimeOffset(2026,10,25,1,30,0,TimeSpan.Zero);
+var autumnPlan = Planning.Schedule([new(late,"Teste mudança de hora","a",null)],[new("a",new(2026,10,25),new(1,0),new(3,0))],[new(late,20)],[],family,autumn);
+Equal(true,autumnPlan.Items.Single().Start>=autumn);
 Console.WriteLine($"{checks} verificações de regras aprovadas.");

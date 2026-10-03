@@ -12,6 +12,7 @@ services:
       App__ProxyNetwork: ${REVERSE_PROXY_CIDR:?Execute scripts/deploy.sh para detetar a rede do proxy}
       Google__ClientId: ${GOOGLE_CLIENT_ID:-}
       Google__ClientSecret: ${GOOGLE_CLIENT_SECRET:-}
+      OpenRouter__ApiKey: ${OPENROUTER_API_KEY:-}
       Google__RedirectUri: ${PUBLIC_ORIGIN}/api/integrations/google/callback
     labels:
       traefik.enable: "true"

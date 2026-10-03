@@ -14,3 +14,11 @@ A sessão e o shell estão agora no layout raiz através de AppFrame. A transiç
 A API local também confirmou a regra nova: agosto transporta 0 €, setembro recebe 0 € e outubro recebe 59,75 €. Compilação da API aprovada, sem avisos ou erros.
 
 BootstrapChecks com SQLite ainda não executado: falta restaurar a dependência no ambiente com acesso ao NuGet. Integração OAuth real, Docker de produção, publicação GitHub e deploy remoto continuam sem validação neste sandbox.
+
+## Sugestões conversacionais — 03/10/2026
+
+- Testes de domínio: 97 verificações aprovadas, incluindo disponibilidade, durações, responsáveis, ausência de sobreposição, passagem de dia e mudanças de hora em Lisboa.
+- Integração OpenRouter com transporte simulado: 15 verificações aprovadas, incluindo modelo gratuito fixo, JSON estruturado, chave ausente e falhas do fornecedor.
+- API compilada sem avisos ou erros; exportação estática do frontend aprovada com TypeScript e oito páginas.
+- Interface verificada no Chrome com dados fictícios: conversa, resumo editável, alteração de duração, plano, alternativa local após falha e preservação da conversa ao fechar e reabrir. O layout móvel manteve o diálogo dentro da janela, sem aumentar a altura do documento. Esta verificação usou uma janela responsiva com zoom do browser; não comprova as dimensões CSS exatas do perfil iPhone.
+- A chamada real ao OpenRouter e o fluxo completo com a base de dados não foram executados nesta etapa: o sandbox bloqueou DNS externo e acesso ao Docker. Os testes simulados não substituem essa validação em produção.

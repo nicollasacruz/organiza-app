@@ -14,5 +14,6 @@ export App__PasskeyDomain=localhost
 export App__KeyPath="$PWD/.local/keys"
 export Google__ClientId="${GOOGLE_CLIENT_ID:-}"
 export Google__ClientSecret="${GOOGLE_CLIENT_SECRET:-}"
+export OpenRouter__ApiKey="${OPENROUTER_API_KEY:-}"
 export Google__RedirectUri=http://localhost:3000/api/integrations/google/callback
 exec dotnet run --project backend/Organiza.Api -- "$@"

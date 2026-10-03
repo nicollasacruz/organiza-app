@@ -22,6 +22,16 @@ Uma ocorrência ativa real por rotina. Ao concluir, preservar o histórico e cri
 
 No Kanban, A fazer mostra tarefas sem data, atrasadas e datadas até hoje+7 dias (inclusive); as posteriores continuam acessíveis nos calendários. As atrasadas permanecem até serem concluídas. As colunas preenchem a altura útil, sem scroll da página; listas extensas têm scroll interno. Atrasadas ficam vermelhas, hoje até hoje+3 dias (inclusive) âmbar. Rótulos acompanham as cores. Concluídas não ficam atrasadas. Os calendários mostram previsões só de leitura. Se a atual está atrasada, prever a partir de hoje; caso contrário, a partir da data atual prevista. Previsões assumem conclusão na data prevista, não têm ID real e nunca podem ser concluídas ou copiadas para Google.
 
+## Sugestões para hoje e amanhã
+
+Conversa para toda a família, iniciada pelo botão Sugerir no ecrã de tarefas. Usa a hora atual em Lisboa em cada pedido, pergunta pelos intervalos livres dos participantes e propõe durações estimadas para confirmar ou corrigir. O resumo pode ser editado antes de gerar; o utilizador pode continuar a conversa para ajustar o plano. A conversa permanece apenas durante a visita ao ecrã e não é guardada na base de dados nem offline.
+
+Considera ocorrências reais pendentes, não arquivadas, atrasadas, sem data ou com prazo até hoje+7 dias. Exclui concluídas e previsões. Respeita os responsáveis existentes; tarefas sem responsável podem ser sugeridas a participantes disponíveis. Responsável alternativo só é proposto quando pedido na conversa e aparece no resumo para confirmação. Prioriza atrasadas e prazos próximos; nenhuma sugestão altera registos ou Google Agenda.
+
+O servidor valida os identificadores, corta tempo já passado, elimina intervalos de dias que deixaram de ser hoje/amanhã, une janelas sobrepostas e encaixa tarefas sem sobrepor trabalho da mesma pessoa. Não divide tarefas entre intervalos. Sem tempo suficiente, indica Sem tempo disponível; sem estimativa, Duração por confirmar. Revalida membros, tarefas pendentes e a hora ao gerar.
+
+OpenRouter no backend, com chave no .env privado e modelo fixo openrouter/free, sem modelos pagos. Respostas estruturadas são validadas; erros, limites ou timeout preservam a conversa. Com horários e durações preenchidos, pode gerar uma proposta local sem chamada à IA. Apenas mensagens, nomes de participantes e títulos, responsáveis e datas das tarefas relevantes são enviados; ganhos, emails e credenciais são excluídos. Esta partilha é indicada na interface. Sem alteração da stack nem migração de dados.
+
 ## Google Agenda
 
 OAuth individual separado do login, seleção de calendário com acesso de escrita incluindo partilhados. Guardar uma cópia manual de uma ocorrência real, dia inteiro ou hora/duração em Lisboa. Nunca exportar recurrence ou previsões. Alterar, concluir ou eliminar uma tarefa não muda a cópia. Nova ocorrência exige nova ação.

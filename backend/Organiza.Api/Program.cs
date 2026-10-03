@@ -38,8 +38,10 @@ builder.Services.ConfigureHttpJsonOptions(o => o.SerializerOptions.Converters.Ad
 builder.Services.AddRateLimiter(o => {
     o.RejectionStatusCode = 429;
     o.AddPolicy("auth", c => RateLimitPartition.GetFixedWindowLimiter(c.Connection.RemoteIpAddress?.ToString() ?? "unknown", _ => new FixedWindowRateLimiterOptions { PermitLimit = 20, Window = TimeSpan.FromMinutes(1) }));
+    o.AddPolicy("suggestions", c => RateLimitPartition.GetFixedWindowLimiter(c.User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "unknown", _ => new FixedWindowRateLimiterOptions { PermitLimit = 8, Window = TimeSpan.FromMinutes(1) }));
 });
 builder.Services.AddHttpClient<GoogleCalendar>();
+builder.Services.AddHttpClient<OpenRouterSuggestions>();
 builder.Services.Configure<ForwardedHeadersOptions>(o => {
     o.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
     var network = builder.Configuration["App:ProxyNetwork"];
@@ -80,6 +82,7 @@ app.MapGet("/api/auth/csrf", (HttpContext c, IAntiforgery a) => Results.Ok(new{t
 AuthEndpoints.Map(app);
 var api = app.MapGroup("/api").RequireAuthorization();
 EarningEndpoints.Map(api); TaskEndpoints.Map(api); MemberEndpoints.Map(api); GoogleEndpoints.Map(api);
+SuggestionEndpoints.Map(api);
 app.MapFallback(async c => {
     if(c.Request.Path.StartsWithSegments("/api")) { c.Response.StatusCode=404; return; }
     var route = c.Request.Path.Value!.Trim('/');

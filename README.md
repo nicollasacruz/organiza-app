@@ -47,6 +47,7 @@ A importação preserva aulas iguais e não duplica a mesma linha de origem quan
 
 ```sh
 dotnet run --project backend/Organiza.Checks
+dotnet run --project backend/Organiza.SuggestionChecks
 dotnet run --project backend/Organiza.BootstrapChecks
 cd frontend
 npm run typecheck
@@ -64,6 +65,16 @@ A API e `init-db` preparam o esquema sem eliminar dados, incluindo a tabela de m
 ```
 
 Este script exporta o Next.js e serve o resultado com `dotnet run`. Abra http://localhost:5080/ganhos/. O service worker funciona apenas neste build de produção, não em next dev. Para testar o offline, entre, visite os ecrãs e ative Offline nas ferramentas do navegador. Os dados sincronizados ficam apenas para leitura; terminar sessão limpa os dados privados. A instalação fullscreen depende do suporte do sistema, com fallback standalone. A integração Google no preview precisa de RedirectUri e PublicOrigin ajustados para localhost:5080.
+
+## Sugerir hoje e amanhã
+
+No ecrã de tarefas, **Sugerir** abre uma conversa para organizar o tempo livre de toda a família. A app pergunta pelos intervalos de cada pessoa e propõe durações estimadas para confirmar. O servidor encaixa apenas tarefas reais pendentes, sem sobreposições nem horários passados, considerando a hora atual em Lisboa. A proposta não altera registos nem envia eventos à Google Agenda.
+
+Configure `OPENROUTER_API_KEY` no `.env` privado e reinicie a API em desenvolvimento ou execute `./scripts/deploy.sh` em produção. O backend usa exclusivamente `openrouter/free`, com respostas estruturadas; não recorre a modelos pagos. A chave nunca é enviada ao navegador. A conversa envia ao OpenRouter e ao fornecedor apenas as mensagens, nomes dos participantes e títulos, responsáveis e datas das tarefas relevantes; exclui ganhos, emails e credenciais. As políticas de dados variam conforme o fornecedor do modelo gratuito.
+
+A conversa mantém-se enquanto estiver no ecrã de tarefas e não é guardada na base de dados nem no cache offline. Se a IA estiver indisponível, pode editar os horários e durações no resumo e gerar uma proposta por regras locais. Não é necessária uma migração da base de dados.
+
+Referências: [Free Models Router](https://openrouter.ai/openrouter/free), [respostas estruturadas](https://openrouter.ai/docs/guides/features/structured-outputs).
 
 ## Google Agenda
 
