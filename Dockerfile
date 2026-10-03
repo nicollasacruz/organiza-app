@@ -11,7 +11,7 @@ WORKDIR /src
 COPY backend/ backend/
 RUN dotnet publish backend/Organiza.Api -c Release -o /app
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0-bookworm-slim
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-noble
 USER root
 RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/* && mkdir -p /data/keys && chown -R app:app /data
 WORKDIR /app
