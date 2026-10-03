@@ -1,5 +1,16 @@
 # Verificação local — 03/10/2026
 
+## Módulo de Análise
+
+- `npm run test:analytics`: nove testes com dados sintéticos aprovados, cobrindo sessões repetidas, zero presenças, ponderação por lotação, filtros, datas de corte, histórico vazio, semanas entre meses/anos, meses curtos/bissextos, base percentual zero e arredondamento da estimativa.
+- `npm run typecheck` e `STATIC_EXPORT=1 npm run build -- --webpack`: aprovados, incluindo a nova página estática `/analise/`.
+- `dotnet run --project backend/Organiza.Checks`: 68 verificações de regras aprovadas; sem alterações ao backend ou à base de dados.
+- Prévia com componentes reais e dados sintéticos no `next dev` já existente: vistas mensal/semanal, filtro SALA/AULA 30M, média por aula, resumo global independente dos filtros, navegação por setas nos gráficos, estados vazios e temas claro/escuro verificados no Chrome. Largura efetiva de 320 px sem overflow horizontal da página; gráficos/tabelas usam scroll interno.
+- O ecrã e o hook reais também foram exercitados com API, sessão e armazenamento simulados e isolados: carregamento com três pulses e sem indicadores a zero; snapshots offline com data de sincronização; ausência de snapshots sem métricas; erro de API com mensagem de erro. As simulações não alteram dados reais.
+- A abertura de uma nova porta para `next dev` foi bloqueada pela política de sandbox/aprovação. A validação visual reutilizou apenas o servidor de desenvolvimento existente e uma prévia temporária de QA. Login/logout, service worker instalado e integração ponta a ponta com a API real não foram revalidados nesta alteração.
+
+## Verificações anteriores
+
 - `dotnet run --project backend/Organiza.Checks --no-restore`: 68 verificações aprovadas, incluindo limites de ocupação, transporte entre meses, metas por vigência correção da meta inicial para 430 € e exclusão de agosto do transporte.
 - `dotnet build backend/Organiza.Api --no-restore`: aprovado, sem avisos ou erros.
 - `STATIC_EXPORT=1 npm run build`: aprovado, com TypeScript e oito páginas estáticas.
