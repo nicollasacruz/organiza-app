@@ -14,13 +14,13 @@ Meta mensal inicial de 430 € (corrigida retroativamente a pedido do utilizador
 
 ## Tarefas
 
-Kanban no computador: A fazer / Concluídas; no mobile: apenas A fazer, preenchendo o espaço livre. Registos antigos em curso aparecem em A fazer; vista semanal de segunda a domingo e vista mensal. Responsável opcional, descrição opcional; data opcional em tarefas avulsas e obrigatória na primeira recorrência.
+Kanban no computador: A fazer / Concluídas; Concluídas mostra apenas a ocorrência concluída mais recente de cada série, ordenada por conclusão mais recente, e o contador corresponde aos cartões visíveis. Tarefas avulsas permanecem individuais. O histórico completo é preservado nos dados e nos calendários; no mobile: apenas A fazer, preenchendo o espaço livre. Registos antigos em curso aparecem em A fazer; vista semanal de segunda a domingo e vista mensal. Responsável opcional, descrição opcional; data opcional em tarefas avulsas e obrigatória na primeira recorrência.
 
 Recorrências a partir da conclusão: diária 1 dia, cada 3 dias, semanal 7, quinzenal 15, mensal 30, bimestral 60, trimestral 90, semestral 180. Personalizada N dias / N×7 semanas / N×30 meses. Não usar AddMonths para recorrências.
 
 Uma ocorrência ativa real por rotina. Ao concluir, preservar o histórico e criar a próxima com data de conclusão em Lisboa + intervalo. Pendente atrasada mantém a data original. Transação e bloqueio de linha impedem duas próximas ocorrências. Desfazer só a última conclusão, se a próxima não foi alterada, iniciada ou copiada para Google. Eliminar a ativa termina a rotina e conserva o histórico.
 
-Atrasadas ficam vermelhas, hoje até hoje+6 dias âmbar. Rótulos acompanham as cores. Concluídas não ficam atrasadas. Os calendários mostram previsões só de leitura. Se a atual está atrasada, prever a partir de hoje; caso contrário, a partir da data atual prevista. Previsões assumem conclusão na data prevista, não têm ID real e nunca podem ser concluídas ou copiadas para Google.
+No Kanban, A fazer mostra tarefas sem data, atrasadas e datadas até hoje+7 dias (inclusive); as posteriores continuam acessíveis nos calendários. As atrasadas permanecem até serem concluídas. As colunas preenchem a altura útil, sem scroll da página; listas extensas têm scroll interno. Atrasadas ficam vermelhas, hoje até hoje+3 dias (inclusive) âmbar. Rótulos acompanham as cores. Concluídas não ficam atrasadas. Os calendários mostram previsões só de leitura. Se a atual está atrasada, prever a partir de hoje; caso contrário, a partir da data atual prevista. Previsões assumem conclusão na data prevista, não têm ID real e nunca podem ser concluídas ou copiadas para Google.
 
 ## Google Agenda
 
