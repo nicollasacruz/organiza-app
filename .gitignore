@@ -1,0 +1,13 @@
+.local/
+.env
+.env.*
+!.env.example
+node_modules/
+.next/
+out/
+bin/
+obj/
+*.user
+.DS_Store
+backend/Organiza.Api/wwwroot/
+*.tsbuildinfo

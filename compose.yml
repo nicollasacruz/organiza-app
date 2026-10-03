@@ -1,0 +1,52 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      VIRTUAL_HOST: ${VIRTUAL_HOST:-appcasa.run.place}
+      VIRTUAL_PORT: "8080"
+      LETSENCRYPT_HOST: ${LETSENCRYPT_HOST:-appcasa.run.place}
+      LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL:?Configure LETSENCRYPT_EMAIL}
+      ConnectionStrings__Database: Host=db;Database=organiza;Username=organiza;Password=${POSTGRES_PASSWORD:?Configure POSTGRES_PASSWORD}
+      App__PublicOrigin: ${PUBLIC_ORIGIN:?Configure PUBLIC_ORIGIN com HTTPS}
+      App__PasskeyDomain: ${PASSKEY_DOMAIN:?Configure PASSKEY_DOMAIN sem protocolo}
+      App__KeyPath: /data/keys
+      App__ProxyNetwork: ${REVERSE_PROXY_CIDR:?Execute scripts/deploy.sh para detetar a rede do proxy}
+      Google__ClientId: ${GOOGLE_CLIENT_ID:-}
+      Google__ClientSecret: ${GOOGLE_CLIENT_SECRET:-}
+      Google__RedirectUri: ${PUBLIC_ORIGIN}/api/integrations/google/callback
+    expose: ["8080"]
+    networks:
+      - default
+      - reverse-proxy
+    volumes:
+      - app_keys:/data/keys
+    depends_on:
+      db: {condition: service_healthy}
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+  db:
+    image: postgres:18.6-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: organiza
+      POSTGRES_USER: organiza
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Configure POSTGRES_PASSWORD}
+    volumes: ["prod_db:/var/lib/postgresql"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U organiza -d organiza"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+volumes:
+  prod_db:
+  app_keys:
+networks:
+  reverse-proxy:
+    external: true
+    name: reverse-proxy

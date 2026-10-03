@@ -1,0 +1,28 @@
+"use client";
+import {createContext,useContext,useEffect,useState,useCallback,useRef,type ReactNode} from 'react';
+import {api,ApiError,resetCsrf} from '@/lib/api';
+import {clearSnapshots,readSnapshot,saveSnapshot} from '@/lib/offline';
+import {applyTheme} from '@/lib/theme';
+import type {Member} from '@/lib/types';
+import {loginPasskey} from '@/lib/passkeys';
+import {Button,ErrorBox,Field,Icon} from './ui';
+type DataCache={userId:string|null;entries:Map<string,unknown>};
+type Session={dataCache:DataCache;user:Member;offline:boolean;synced:string;refreshSession:()=>Promise<void>;updateUser:(u:Member)=>void;logout:()=>Promise<void>};
+const Context=createContext<Session|null>(null);
+export function useSession(){const c=useContext(Context);if(!c)throw new Error('Sessão indisponível');return c;}
+export function SessionProvider({children,invitation=false}:{children:ReactNode;invitation?:boolean}){
+ const dataCache=useRef<DataCache>({userId:null,entries:new Map()}).current;
+ const [user,setUser]=useState<Member|null>(null);const [loading,setLoading]=useState(true);const [offline,setOffline]=useState(false);const [synced,setSynced]=useState('');
+ const updateUser=useCallback((u:Member)=>{if(dataCache.userId!==u.id)dataCache.entries.clear();dataCache.userId=u.id;setUser(u);applyTheme(u.accent,u.theme);localStorage.setItem('organiza-user',JSON.stringify({id:u.id}));void saveSnapshot(u.id,'session',u).catch(()=>{});resetCsrf();},[dataCache]);
+ const invalidate=useCallback(async()=>{dataCache.userId=null;dataCache.entries.clear();setUser(null);setOffline(false);resetCsrf();try{await clearSnapshots();}catch{}},[dataCache]);
+ const refreshSession=useCallback(async()=>{try{const u=await api<Member>('/auth/session');updateUser(u);setOffline(false);setSynced(new Date().toISOString());}catch(e){if(e instanceof ApiError&&e.status===0){try{const stored=JSON.parse(localStorage.getItem('organiza-user')||'null');const cached=stored?.id?await readSnapshot<Member>(stored.id,'session'):undefined;if(cached){dataCache.userId=cached.data.id;setUser(cached.data);applyTheme(cached.data.accent,cached.data.theme);setOffline(true);setSynced(cached.synced);}else setUser(null);}catch{setUser(null);}}else await invalidate();}finally{setLoading(false);}},[invalidate,updateUser,dataCache]);
+ useEffect(()=>{void refreshSession();const expired=()=>void invalidate();const online=()=>void refreshSession();const lost=()=>setOffline(true);const storage=(e:StorageEvent)=>{if(e.key==='organiza-logout')void invalidate();};window.addEventListener('organiza-expired',expired);window.addEventListener('online',online);window.addEventListener('offline',lost);window.addEventListener('storage',storage);return()=>{window.removeEventListener('organiza-expired',expired);window.removeEventListener('online',online);window.removeEventListener('offline',lost);window.removeEventListener('storage',storage);};},[refreshSession,invalidate]);
+ useEffect(()=>{if(!user)return;const media=matchMedia('(prefers-color-scheme: dark)');const change=()=>applyTheme(user.accent,user.theme);media.addEventListener('change',change);return()=>media.removeEventListener('change',change);},[user]);
+ async function logout(){try{if(!offline)await api('/auth/logout','POST');}finally{localStorage.setItem('organiza-logout',Date.now().toString());await invalidate();}}
+ if(loading)return <div className="loading"><span className="brand"><Icon name="home" size={32}/>Organiza</span><p>A carregar a sua família…</p></div>;
+ if(!user&&!invitation)return <Login onLogin={u=>{updateUser(u);setOffline(false);}}/>;
+ if(!user)return children;
+ return <Context.Provider value={{dataCache,user,offline,synced,refreshSession,updateUser,logout}}>{children}</Context.Provider>;
+}
+function Login({onLogin}:{onLogin:(u:Member)=>void}){const [error,setError]=useState('');const [busy,setBusy]=useState(false);async function submit(e:React.FormEvent<HTMLFormElement>){e.preventDefault();setBusy(true);setError('');const values=new FormData(e.currentTarget);try{onLogin(await api<Member>('/auth/login','POST',{email:values.get('email'),password:values.get('password')}));}catch(e){setError((e as Error).message);}finally{setBusy(false);}}async function passkey(){setBusy(true);setError('');try{onLogin(await loginPasskey());}catch(e){setError((e as Error).message);}finally{setBusy(false);}}
+ return <div className="auth-page"><div className="auth-aside"><span className="brand"><Icon name="home" size={34}/>Organiza</span><div><span className="eyebrow">O DIA A DIA, EM FAMÍLIA</span><h1>Espaço para o<br/>que importa.</h1><p>Ganhos e tarefas da família,<br/>num só lugar.</p></div><span>Feito para a vossa rotina.</span></div><main className="auth-main"><form className="auth-card" onSubmit={submit}><span className="mobile-brand brand"><Icon name="home"/>Organiza</span><h1>Bem-vindo de volta</h1><p>Entre no espaço da sua família.</p><Field label="Email"><input name="email" type="email" autoComplete="username webauthn" required/></Field><Field label="Palavra-passe"><input name="password" type="password" autoComplete="current-password" minLength={12} required/></Field><ErrorBox error={error}/><Button className="primary full" disabled={busy}>Entrar <Icon name="arrow"/></Button><div className="divider"><span>ou</span></div><Button type="button" className="full" disabled={busy||typeof PublicKeyCredential==='undefined'} onClick={passkey}><Icon name="key"/>Entrar com passkey</Button><p className="auth-note">A entrada de novos membros é feita por convite.<br/>Para recuperar o acesso, contacte o administrador da família.</p></form></main></div>;}

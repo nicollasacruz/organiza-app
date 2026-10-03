@@ -1,0 +1,10 @@
+.git
+.local
+**/node_modules
+**/.next
+**/out
+**/bin
+**/obj
+.env
+**/.env.local
+docs/design
