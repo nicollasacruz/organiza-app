@@ -41,3 +41,9 @@ BootstrapChecks com SQLite ainda não executado: falta restaurar a dependência 
 - Fluxo completo aprovado em dois contextos de navegador separados, com conta fictícia: login no telemóvel, confirmação obrigatória, autorização, cookie de sessão da TV e redirecionamento para o Kanban. Layout sem overflow horizontal em 390×844 e sem scroll em 1920×1080.
 - Build estático com TypeScript e nove rotas da app aprovado; nove testes de Análise aprovados. Os dados de teste não são enviados para produção.
 - A base de desenvolvimento em Docker estava indisponível; os testes da API usaram SQLite em memória, sem alterar os dados locais ou o esquema de produção.
+
+## Atualização automática do Kanban — 21/10/2026
+
+- Verificação no navegador com APIs simuladas e relógio controlado: cartões atualizados após 15 segundos sem navegação; pesquisa, scroll e rascunho de formulário preservados.
+- Pausa em segundo plano e offline, atualização ao voltar à página e recuperar a ligação, ausência de pedidos automáticos sobrepostos quando uma resposta demora, renovação da data de Lisboa e remoção do timer ao sair do ecrã: aprovados.
+- Build estático com TypeScript e nove testes de Análise aprovados.

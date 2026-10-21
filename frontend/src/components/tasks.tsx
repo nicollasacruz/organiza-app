@@ -13,6 +13,29 @@ function latestCompleted(items:TaskItem[]){const latest=new Map<string,TaskItem>
 function urgency(task:TaskItem,day:string){return task.status==='done'||!task.due?'normal':task.due<day?'overdue':task.due<=addDays(day,3)?'soon':'normal';}
 function forecast(items:TaskItem[],day:string,from:string,through:string):Prediction[]{return items.filter(x=>x.status!=='done'&&!x.archived&&x.intervalDays&&x.due).flatMap(t=>{const result:Prediction[]=[];let date=addDays(t.due!<day?day:t.due!,t.intervalDays!);while(date<=through){if(date>=from)result.push({sourceId:t.id,seriesId:t.seriesId,title:t.title,description:t.description,assigneeId:t.assigneeId,due:date,predicted:true});date=addDays(date,t.intervalDays!);}return result;});}
 export function TasksScreen(){const session=useSession();const tasks=useData<{today:string;items:TaskItem[]}>('/tasks',{today:today(),items:[]});const members=useData<Member[]>('/members',[]);const copies=useData<CalendarCopy[]>('/integrations/google/copies',[]);const [suggesting,setSuggesting]=useState(false);const [suggestionSession,setSuggestionSession]=useState(emptySuggestionSession);const [view,setView]=useState<'board'|'week'|'month'>('board');const [anchor,setAnchor]=useState(today());const [filter,setFilter]=useState('');const [editing,setEditing]=useState<TaskItem|null|undefined>();const [selected,setSelected]=useState<TaskItem|Prediction|null>(null);const [calendarTask,setCalendarTask]=useState<TaskItem|null>(null);const [deleting,setDeleting]=useState<TaskItem|null>(null);const [error,setError]=useState('');const [busy,setBusy]=useState(false);const day=tasks.data.today||today();const readonly=tasks.readonly||session.offline;const items=tasks.data.items.filter(t=>!t.archived&&(!filter||t.title.toLowerCase().includes(filter.toLowerCase())));
+ // Manter o quadro da TV atualizado sem desmontar cartões ou formulários.
+ useEffect(()=>{
+  if(session.offline)return;
+  let refreshing=false;
+  let disposed=false;
+  async function refreshVisible(){
+   if(disposed||refreshing||document.visibilityState!=='visible'||!navigator.onLine)return;
+   refreshing=true;
+   try{await Promise.allSettled([tasks.refresh(),members.refresh(),copies.refresh()]);}
+   finally{refreshing=false;}
+  }
+  const refresh=()=>{void refreshVisible();};
+  const timer=setInterval(refresh,15000);
+  document.addEventListener('visibilitychange',refresh);
+  window.addEventListener('focus',refresh);
+  window.addEventListener('online',refresh);
+  return()=>{
+   disposed=true;clearInterval(timer);
+   document.removeEventListener('visibilitychange',refresh);
+   window.removeEventListener('focus',refresh);
+   window.removeEventListener('online',refresh);
+  };
+ },[session.offline,tasks.refresh,members.refresh,copies.refresh]);
  const weekStart=addDays(anchor,-((new Date(anchor+'T12:00:00').getDay()+6)%7));const monthStart=anchor.slice(0,7)+'-01';const monthEnd=new Date(Number(anchor.slice(0,4)),Number(anchor.slice(5,7)),0,12).toISOString().slice(0,10);const gridStart=view==='week'?weekStart:addDays(monthStart,-((new Date(monthStart+'T12:00:00').getDay()+6)%7));const gridEnd=view==='week'?addDays(gridStart,6):addDays(monthEnd,6-((new Date(monthEnd+'T12:00:00').getDay()+6)%7));
  const dates=useMemo(()=>{const all:string[]=[];for(let d=gridStart;d<=gridEnd;d=addDays(d,1))all.push(d);return all;},[gridStart,gridEnd]);const predictions=forecast(items,day,gridStart,gridEnd);
  async function change(task:TaskItem,status:string){setError('');setBusy(true);try{await api('/tasks/'+task.id+'/status','POST',{status,revision:task.revision});await tasks.refresh();}catch(e){setError((e as Error).message);}finally{setBusy(false);}}
