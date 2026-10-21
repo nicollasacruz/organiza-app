@@ -10,6 +10,8 @@ using Organiza.Api;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAuthorization();
+builder.Services.AddSingleton(TimeProvider.System);
+builder.Services.AddSingleton<DeviceLoginStore>();
 builder.Services.AddDbContext<AppDb>(o => o.UseNpgsql(builder.Configuration.GetConnectionString("Database") ?? throw new InvalidOperationException("Configure ConnectionStrings__Database.")));
 builder.Services.AddIdentity<Member, IdentityRole>(o => {
     o.User.RequireUniqueEmail = true;
@@ -37,6 +39,8 @@ builder.Services.AddDataProtection().SetApplicationName("Organiza").PersistKeysT
 builder.Services.ConfigureHttpJsonOptions(o => o.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddRateLimiter(o => {
     o.RejectionStatusCode = 429;
+    o.AddPolicy("device-start", c => RateLimitPartition.GetFixedWindowLimiter(c.Connection.RemoteIpAddress?.ToString() ?? "unknown", _ => new FixedWindowRateLimiterOptions { PermitLimit = 5, Window = TimeSpan.FromMinutes(1) }));
+    o.AddPolicy("device-poll", c => RateLimitPartition.GetFixedWindowLimiter(c.Connection.RemoteIpAddress?.ToString() ?? "unknown", _ => new FixedWindowRateLimiterOptions { PermitLimit = 120, Window = TimeSpan.FromMinutes(1) }));
     o.AddPolicy("auth", c => RateLimitPartition.GetFixedWindowLimiter(c.Connection.RemoteIpAddress?.ToString() ?? "unknown", _ => new FixedWindowRateLimiterOptions { PermitLimit = 20, Window = TimeSpan.FromMinutes(1) }));
     o.AddPolicy("suggestions", c => RateLimitPartition.GetFixedWindowLimiter(c.User.FindFirstValue(ClaimTypes.NameIdentifier) ?? "unknown", _ => new FixedWindowRateLimiterOptions { PermitLimit = 8, Window = TimeSpan.FromMinutes(1) }));
 });
@@ -80,6 +84,7 @@ app.Use(async (c,next) => {
 app.MapGet("/api/health", async (AppDb db) => await db.Database.CanConnectAsync() ? Results.Ok(new{status="ok"}) : Results.StatusCode(503));
 app.MapGet("/api/auth/csrf", (HttpContext c, IAntiforgery a) => Results.Ok(new{token=a.GetAndStoreTokens(c).RequestToken}));
 AuthEndpoints.Map(app);
+DeviceLoginEndpoints.Map(app);
 var api = app.MapGroup("/api").RequireAuthorization();
 EarningEndpoints.Map(api); TaskEndpoints.Map(api); MemberEndpoints.Map(api); GoogleEndpoints.Map(api);
 SuggestionEndpoints.Map(api);

@@ -49,6 +49,7 @@ A importação preserva aulas iguais e não duplica a mesma linha de origem quan
 dotnet run --project backend/Organiza.Checks
 dotnet run --project backend/Organiza.SuggestionChecks
 dotnet run --project backend/Organiza.BootstrapChecks
+dotnet run --project backend/Organiza.DeviceChecks
 cd frontend
 npm run typecheck
 STATIC_EXPORT=1 npm run build
@@ -111,3 +112,7 @@ docker compose run --rm app reset-password seu@email.pt
 ## Limites da validação desta sessão
 
 Consulte [docs/verification.md](docs/verification.md) para os comandos executados, resultados e verificações ainda dependentes de acesso a Docker, rede e credenciais Google.
+
+## Entrar na TV por QR code
+
+Na TV, abra `/device/` (também disponível pelo botão **Ligar uma TV com QR code** no login). Leia o QR com a câmara do telemóvel, entre na sua conta se necessário, compare o código de seis dígitos e confirme **Autorizar TV e abrir Kanban**. A TV abre automaticamente `/tarefas/`, com uma sessão normal da mesma conta. O QR expira em cinco minutos e só pode ser usado uma vez; pode gerar outro quando expirar. Os pedidos pendentes são descartados quando a API reinicia. O QR é gerado localmente, sem serviços externos.

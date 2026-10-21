@@ -6,6 +6,10 @@ Organiza é uma PWA fullscreen privada de família. .NET 10, ASP.NET Core Identi
 
 Desenvolvimento usa dotnet run e next dev; Docker Compose apenas para PostgreSQL. Produção usa Compose com monólito a servir API e frontend estático, HTTPS, PostgreSQL privado e chaves Data Protection persistentes. Não alterar stack sem a opinião do utilizador.
 
+## Login na TV por QR code
+
+A rota /device mostra um QR code de uso único, válido durante cinco minutos. No telemóvel, o membro entra com a autenticação normal, compara o código de confirmação com o da TV e autoriza explicitamente. A TV recebe uma sessão persistente da mesma conta e abre /tarefas; as permissões habituais mantêm-se. O QR não contém uma sessão nem o segredo que permite à TV recolher a autorização. Esse segredo fica num cookie HttpOnly, Secure em produção e SameSite Strict. O token de aprovação viaja no fragmento do URL, sem aparecer no pedido HTTP. A aprovação exige membro ativo, proteção CSRF e não cria sessão no telemóvel por si só. A recolha revalida o membro e o bloqueio da conta, é atómica e de uso único. Pedidos têm limites por IP e capacidade global; ficam apenas na memória da única instância da API e expiram também ao reiniciá-la. Não altera o esquema da base de dados.
+
 ## Ganhos
 
 SALA: 7 €/hora, incluindo frações. AULA 30M: até 49% = 7,50 €; acima de 49% e abaixo de 90% = 9,75 €; desde 90% = 10,60 €. AULA 50M: 13 €, 16 €, 17,50 € nas mesmas faixas. Ocupação não é arredondada antes de escolher faixa. Zero pessoas recebe o valor base. Lotação positiva, presenças inteiras até à lotação. Dinheiro decimal no cálculo e cêntimos inteiros no armazenamento/API.

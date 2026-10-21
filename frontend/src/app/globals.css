@@ -155,3 +155,13 @@
 @media(max-width:1100px){.analytics-stats{grid-template-columns:repeat(3,minmax(0,1fr))}.analytics-month-columns{grid-template-columns:1fr;gap:22px}.analytics-estimate{border-left:0;border-top:1px solid var(--line);padding:20px 0 0}.analytics-charts{grid-template-columns:1fr}}
 @media(max-width:720px){.bottom-nav a{min-width:0;flex:1;padding:5px 3px}.analytics-month{padding:18px;margin-bottom:22px}.analytics-month-values{gap:8px}.analytics-month-values dt{font-size:10px}.analytics-month-values dd{font-size:21px}.analytics-controls{gap:12px}.analytics-kind{width:100%;justify-content:space-between}.analytics-kind .custom-select{width:180px}.analytics-controls>.month-bar{gap:3px}.analytics-period{font-size:12px}.analytics-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.analytics-stat{padding:15px 12px}.analytics-stat>strong{font-size:23px}.analytics-chart{padding:18px 14px 14px}.analytics-comparison{line-height:1.7}.analytics-chart-readout>strong{width:100%}.analytics-method{padding:10px 16px}.analytics-footnote{padding:14px 16px}.analytics-month .goal-progress span{font-size:11px}.analytics-month-values dd{overflow-wrap:anywhere}}
 @media(max-width:360px){.analytics-month-values dd{font-size:18px}}
+
+/* Ligação da TV: QR legível à distância e confirmação no telemóvel. */
+.device-page{min-height:100dvh;display:grid;place-items:center;padding:32px;background:var(--bg)}
+.device-card{width:100%;max-width:1120px;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:40px;box-shadow:var(--shadow)}
+.device-layout{display:grid;grid-template-columns:1fr 420px;gap:48px;align-items:center;margin-top:32px}
+.device-instructions h1{font-size:42px;margin-top:16px}.device-instructions ol{padding-left:24px;font-size:20px;line-height:1.6}.device-instructions li{padding-left:8px;margin-bottom:16px}
+.device-qr-panel{text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:440px}
+.device-qr{display:block;width:100%;max-width:360px;height:auto;border-radius:12px}.device-code{display:block;font-size:40px;letter-spacing:8px;font-variant-numeric:tabular-nums;line-height:1.5;margin:8px 0 16px}
+.device-approval{max-width:520px}.device-approval .brand{margin-bottom:32px}.device-approval h1{font-size:30px}.device-approval>.button{margin-top:12px}.device-approval .checkbox{margin:24px 0}
+@media(max-width:800px){.device-page{padding:16px}.device-card{padding:24px}.device-layout{grid-template-columns:1fr;gap:24px}.device-instructions h1{font-size:30px}.device-instructions ol{font-size:16px}.device-qr-panel{min-height:0}.device-qr{max-width:300px}}

@@ -33,3 +33,11 @@ BootstrapChecks com SQLite ainda não executado: falta restaurar a dependência 
 - API compilada sem avisos ou erros; exportação estática do frontend aprovada com TypeScript e oito páginas.
 - Interface verificada no Chrome com dados fictícios: conversa, resumo editável, alteração de duração, plano, alternativa local após falha e preservação da conversa ao fechar e reabrir. O layout móvel manteve o diálogo dentro da janela, sem aumentar a altura do documento. Esta verificação usou uma janela responsiva com zoom do browser; não comprova as dimensões CSS exatas do perfil iPhone.
 - A chamada real ao OpenRouter e o fluxo completo com a base de dados não foram executados nesta etapa: o sandbox bloqueou DNS externo e acesso ao Docker. Os testes simulados não substituem essa validação em produção.
+
+## Login por QR code na TV — 21/10/2026
+
+- `/device/` gera QR localmente; confirmação autenticada no telemóvel, comparação do código e abertura automática de `/tarefas/` na TV.
+- 32 verificações de segurança aprovadas com store e endpoints HTTP reais (Identity, cookies, CSRF e SQLite efémero): expiração, uso único, recolha concorrente, separação de navegadores, limite de pedidos, capacidade, bloqueio e desativação da conta.
+- Fluxo completo aprovado em dois contextos de navegador separados, com conta fictícia: login no telemóvel, confirmação obrigatória, autorização, cookie de sessão da TV e redirecionamento para o Kanban. Layout sem overflow horizontal em 390×844 e sem scroll em 1920×1080.
+- Build estático com TypeScript e nove rotas da app aprovado; nove testes de Análise aprovados. Os dados de teste não são enviados para produção.
+- A base de desenvolvimento em Docker estava indisponível; os testes da API usaram SQLite em memória, sem alterar os dados locais ou o esquema de produção.
